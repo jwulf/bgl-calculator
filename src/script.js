@@ -4,7 +4,7 @@
 /* global Parse */
 
 window.BGLApp = {};
-BGLApp.appVersion = '1.43';
+BGLApp.appVersion = '1.44;
 
 /* Controls whether Google Sheets posting is done from the client */
 BGLApp.clientSideGooglePost = false; //  [it's done in the Parse.com cloud code]
@@ -80,6 +80,8 @@ Version 1.42: Removed ForerunnerDB support. Created global namespace object BGLA
 
 version 1.43: Added truncateLocalStorage method. Not called yet - but when it's stable
 call this from WriteDirtyStore and possibly after postToParse.
+
+version 1.44: Parse Analytics enabled. This was the source of the HTTP 400 response error.
 
 */
 
@@ -253,8 +255,10 @@ function postToParse(entry, sync){
       dimensions.range = range;
 
       // Send the dimensions to Parse along with the 'search' event
-      if (entry.notes.indexOf('testNoParseAnalytics') !== -1) {
-        Parse.Analytics.track('BGL Levels', dimensions);
+      if (entry.notes.indexOf('testNoParseAnalytics') == -1) {
+        Parse.Analytics.track('BGL-Levels', dimensions);
+        // no whitespaces in event name
+        // http://stackoverflow.com/questions/26695396/parse-com-preventing-whitespaces-in-custom-tracking-events
       }
     } else {
       sync && alert('Posted locally - entry will never go to Parse');
@@ -312,14 +316,17 @@ function truncateLocalStorage(killEmAll) {
 Pass killEmAll=true to remove dirty entries as well */
 
   killEmAll = killEmAll || false;
-  var entries = retrieveLocalStorageEntries();
-  var thisEntry;
+  var entries = retrieveLocalStorageEntries(),
+      thisEntry,
+      bodycount = 0;
   for (var i =0; i < entries.length; i++) {
     thisEntry = entries[i];
     if (!thisEntry.dirty || (thisEntry.dirty && killEmAll)) {
-      localStorage.removeItem(thisEntry.guid);
+      localStorage.removeItem('bglentry-' + thisEntry.guid);
+      bodycount ++;
     }
   }
+  console.log(bodycount + ' entries removed.');
 }
 
 function markEntryClean(guid) {
@@ -434,10 +441,8 @@ function setValuesFromURL(){
 
 function initializeParse() {
   if (!BGLApp.parseInitialized) {
-    BGLApp.parseInitialized = Parse.initialize(BGLApp.secrets.parseAPIKey, BGLApp.secrets.parseAPIKey2) 
-      || BGLApp.parseInitialized;
-  //  window.parseInitialized = true;
-  var something = 123;
+     Parse.initialize(BGLApp.secrets.parseAPIKey, BGLApp.secrets.parseAPIKey2) 
+     BGLApp.parseInitialized = true;
   }
 }
 
