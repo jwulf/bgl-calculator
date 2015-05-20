@@ -1,0 +1,23 @@
+{
+  "name": "bgl-calculator",
+  "version": "1.0.0",
+  "description": "Prahlad's BGL calculator and log",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jwulf/bgl-calculator.git"
+  },
+  "author": "Joshua Wulf",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jwulf/bgl-calculator/issues"
+  },
+  "homepage": "https://github.com/jwulf/bgl-calculator",
+  "dependencies": {
+    "gulp": "^3.8.11",
+    "gulp-s3": "^0.3.0"
+  }
+}

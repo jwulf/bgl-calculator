@@ -1,0 +1,70 @@
+<html manifest="cache.manifest">
+
+<head>
+  <script src="js/secrets.js"></script>
+  <script src="js/parse-1.4.2.min.js"></script>
+  <script src="js/jquery.min.js"></script>
+  <script src="js/fdb-all.min.js"></script>
+  <script src="script.js"></script>
+  <meta charset="utf-8" />
+  <title>Prahlad's Insulin Dosage</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+
+<body onload="pageSetup()">
+  <link rel="stylesheet" href="css/formoid-metro-cyan.css" type="text/css" />
+  <form onsubmit="" class="formoid-metro-cyan"
+    style="background-color:#FFFFFF;font-size:14px;font-family:'Open Sans','Helvetica Neue','Helvetica',Arial,Verdana,sans-serif;color:#666666;max-width:480px;min-width:150px"
+    method="post">
+    <div class="title"><h2>Prahlad's Insulin Dosage</h2></div>
+    <div class="element-input" title="Your Blood Glucose Level">
+      <label class="title">Blood Glucose Level</label><div class="item-cont">
+        <input id="BGL" class="large" type="number" name="input" placeholder="BGL" onkeyup="doCalculation()"/>
+        <span class="icon-place"></span></div></div>
+    <div class="element-input" title="The amount of Carbs you are taking">
+      <label class="title">Carbs</label><div class="item-cont">
+        <input id="Carbs" class="large" type="tel" name="input1" placeholder="Carbs" onkeyup="doCalculation()"/>
+        <span class="icon-place"></span></div></div>
+    <div class="element-input" title="The amount of Novorapid you are taking">
+      <label class="title">Novorapid</label><div class="item-cont">
+        <input id="Rapid" class="large" type="tel" name="input2" placeholder="Novorapid"/>
+        <span class="icon-place"></span></div></div>
+    <div class="element-input">
+      <label class="title">Levemir</label><div class="item-cont">
+        <input id="Basal" class="large" type="tel" name="input3" placeholder="Levemir"/><span class="icon-place"></span></div></div>
+        <div class="element-input">
+          <label class="title">Notes</label><div class="item-cont">
+            <input id="Notes" class="large" name="Notes" type="text" placeholder="Notes"></textarea>
+            <span class="icon-place"></span></div></div>
+
+    <div class="element-date">
+      <label class="title">Date</label><div class="item-cont">
+        <input id="Date" class="large" data-format="yyyy-mm-dd" type="date" name="date" placeholder="Date"/>
+        <span class="icon-place"></span></div></div>
+        <div class="element-time">
+          <label class="title">Time</label><div class="item-cont">
+            <input id="Time" class="large" data-format="hh:mm" type="time" name="time" placeholder="Time"/>
+            <span class="icon-place"></span></div>
+            </div>
+            <div class="element-input">
+              <label id="online-status">[Working Online]</label>
+              <label>
+                <a id ="viewResults" href="" target="_blank">
+                  Results
+                </a>
+              </label>
+            </div>
+    <div class="submit">
+      <input id="Take" type="button" value="Take" onclick="formSubmit()"/></div>
+
+      </form>
+      <script type="text/javascript" src="js/formoid-metro-cyan.js"></script>
+    <!-- Stop Formoid form-->
+
+
+  </body>
+
+
+
+  </html>
