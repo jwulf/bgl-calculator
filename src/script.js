@@ -4,7 +4,7 @@
 /* global Parse */
 
 window.BGLApp = {};
-BGLApp.appVersion = '1.42';
+BGLApp.appVersion = '1.43';
 
 /* Controls whether Google Sheets posting is done from the client */
 BGLApp.clientSideGooglePost = false; //  [it's done in the Parse.com cloud code]
