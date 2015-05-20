@@ -1,15 +1,21 @@
+/* global ForerunnerDB */
 /* global BGLApp */
 /* global $ */
 /* global Parse */
 
 window.BGLApp = {};
-BGLApp.appVersion = '1.41';
+BGLApp.appVersion = '1.42';
 
 /* Controls whether Google Sheets posting is done from the client */
 BGLApp.clientSideGooglePost = false; //  [it's done in the Parse.com cloud code]
 
 /* API secrets are in the secrets.js file */
 BGLApp.secrets = window.BGLAppSecrets;
+
+/* ForerunnerDB is not supported on iOS 
+
+To enable it: (1) set true here; (2) uncomment it in cache.manifest; (3) uncomment it in index.html */
+BGLApp.ForerunnerDBSupport = false;
 
 /* The following switches for debugging work anywhere in the notes field:
 
@@ -69,6 +75,8 @@ Added users and user preferences on the Parse.com backend. Abstracted the Google
 interface and pushover on a per-user basis. Moved pushover notification to Parse.com
 
 Version 1.41: Added testUser for notes.
+
+Version 1.42: Removed ForerunnerDB support. Created global namespace object BGLApp.
 
 */
 
@@ -410,15 +418,16 @@ function setValuesFromURL(){
 
 function initializeParse() {
   if (!BGLApp.parseInitialized) {
-    Parse.initialize(BGLApp.secrets.parseAPIKey, BGLApp.secrets.parseAPIKey2);
-    window.parseInitialized = true;
+    BGLApp.parseInitialized = Parse.initialize(BGLApp.secrets.parseAPIKey, BGLApp.secrets.parseAPIKey2) 
+      || BGLApp.parseInitialized;
+  //  window.parseInitialized = true;
+  var something = 123;
   }
 }
 
 function pageSetup(){
   console.log('Setting up App');
   setValuesFromURL();
-  BGLApp.ForerunnerDBSupport = false;
   BGLApp.onLine = navigator.onLine;
   BGLApp.parseInitialized = false;
   if (BGLApp.onLine) {
