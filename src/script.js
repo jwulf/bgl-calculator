@@ -78,6 +78,9 @@ Version 1.41: Added testUser for notes.
 
 Version 1.42: Removed ForerunnerDB support. Created global namespace object BGLApp.
 
+version 1.43: Added truncateLocalStorage method. Not called yet - but when it's stable
+call this from WriteDirtyStore and possibly after postToParse.
+
 */
 
 function calculateDose (bgl, carbs) {
@@ -116,7 +119,6 @@ function doCalculation(){
 
 function convertTimeTo24Hr(inputval)
 {
-
   var tokens = /([10]?\d):([0-5]\d) ([ap]m)/i.exec(inputval);
   if (tokens == null) { return null; }
   if (tokens[3].toLowerCase() === 'pm' && tokens[1] !== '12') {
@@ -127,9 +129,7 @@ function convertTimeTo24Hr(inputval)
   var convertedval = tokens[1] + ':' + tokens[2];
 
   return convertedval;
-
 }
-
 
 function formSubmit() {
   constructEntry(true);
@@ -304,6 +304,22 @@ function retrieveLocalStorageEntries() {
     }
   }
   return entries;
+}
+
+
+function truncateLocalStorage(killEmAll) {
+/* Removes local entries that have been synced to the server.
+Pass killEmAll=true to remove dirty entries as well */
+
+  killEmAll = killEmAll || false;
+  var entries = retrieveLocalStorageEntries();
+  var thisEntry;
+  for (var i =0; i < entries.length; i++) {
+    thisEntry = entries[i];
+    if (!thisEntry.dirty || (thisEntry.dirty && killEmAll)) {
+      localStorage.removeItem(thisEntry.guid);
+    }
+  }
 }
 
 function markEntryClean(guid) {
