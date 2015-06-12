@@ -4,7 +4,7 @@
 /* global Parse */
 
 window.BGLApp = {};
-BGLApp.appVersion = '1.44;
+BGLApp.appVersion = '1.45';
 
 /* Controls whether Google Sheets posting is done from the client */
 BGLApp.clientSideGooglePost = false; //  [it's done in the Parse.com cloud code]
@@ -134,7 +134,10 @@ function convertTimeTo24Hr(inputval)
 }
 
 function formSubmit() {
-  constructEntry(true);
+  if ( $('#Notes').val() === '') { alert('Add a note please!');}
+  else {
+    constructEntry(true);
+  }
 }
 
 function cleanForm() {
@@ -160,7 +163,7 @@ function constructEntry(sync) {
   var carbs = $('#Carbs').val();
   var rapid = $('#Rapid').val();
   var basal = $('#Basal').val();
-  var notes = $('#Notes').val();
+  var notes = $('#Notes').val()  || 'No Note supplied';
 
   var date = $("input[name='date']").val() || new Date().toJSON().slice(0,10);
   var d = new Date();
@@ -197,7 +200,7 @@ function constructEntry(sync) {
       timestamp: timestamp,
       guid: guid
     };
-    postEntry(entry, sync)
+    postEntry(entry, sync);
   }
 
 }
@@ -225,8 +228,8 @@ function postToParse(entry, sync){
       entry.priority = 0;
       if (entry.bgl > 12 || entry.bgl < 4) entry.priority = 1;
       console.log('Posting to Parse');
-      var bglEntryObject = Parse.Object.extend("bglEntry");
-      var bglEntry = new bglEntryObject();
+      var BglEntryObject = Parse.Object.extend("bglEntry");
+      var bglEntry = new BglEntryObject();
       // Multi-user support
       entry.appUser = BGLApp.secrets.appUser;
       entry.userGuid = BGLApp.secrets.userGuid;
@@ -296,7 +299,7 @@ function localStorageWrite(entry){
 }
 
 function localStorageRead(guid){
-  return JSON.parse(localStorage.getItem('bglentry-' + guid))
+  return JSON.parse(localStorage.getItem('bglentry-' + guid));
 }
 
 function retrieveLocalStorageEntries() {
@@ -441,7 +444,7 @@ function setValuesFromURL(){
 
 function initializeParse() {
   if (!BGLApp.parseInitialized) {
-     Parse.initialize(BGLApp.secrets.parseAPIKey, BGLApp.secrets.parseAPIKey2) 
+     Parse.initialize(BGLApp.secrets.parseAPIKey, BGLApp.secrets.parseAPIKey2); 
      BGLApp.parseInitialized = true;
   }
 }
@@ -475,7 +478,7 @@ function pageSetup(){
   });
   window.addEventListener('offline', function goOffline(){
     BGLApp.onLine = false;
-    console.log('Going Offline...')
+    console.log('Going Offline...');
     $('#online-status').text('[ v' + BGLApp.appVersion + ' Working Offline ]');
   });
 
