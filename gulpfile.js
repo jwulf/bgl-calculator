@@ -30,6 +30,19 @@ gulp.task('publish-prahlad-css', function() {
        }));
 });
 
+gulp.task('publish-prahlad-js', function() {
+  var s3 = require("gulp-s3");
+  var fs = require('fs');
+  var awsCredentials = JSON.parse(fs.readFileSync('./aws.json'));
+  return gulp.src('src/js/**.*')
+       .pipe(s3(awsCredentials, {
+         uploadPath: awsCredentials.prahladPath + 'js/',
+         headers: {
+           'x-amz-acl': 'public-read'
+         }
+       }));
+});
+
 gulp.task('publish-prahlad-secrets', function() {
   var s3 = require("gulp-s3");
   var fs = require('fs');

@@ -1,10 +1,12 @@
+/* global Connect */
 /* global ForerunnerDB */
 /* global BGLApp */
 /* global $ */
 /* global Parse */
 
 window.BGLApp = {};
-BGLApp.appVersion = '1.45';
+BGLApp.appVersion = '1.6';
+var connect;
 
 /* Controls whether Google Sheets posting is done from the client */
 BGLApp.clientSideGooglePost = false; //  [it's done in the Parse.com cloud code]
@@ -83,6 +85,7 @@ call this from WriteDirtyStore and possibly after postToParse.
 
 version 1.44: Parse Analytics enabled. This was the source of the HTTP 400 response error.
 
+version 1.5: Integrated Getconnect.io for visualisations
 */
 
 function calculateDose (bgl, carbs) {
@@ -216,9 +219,26 @@ function postEntry(entry, sync) {
 }
 
 function postEntryOnline(entry, sync) {
-  postToParse(entry, sync);
-  if (BGLApp.clientSideGooglePost) {
-    postToGoogle(entry, sync);
+//  postToParse(entry, sync);
+//  postToConnect(entry, sync);
+  postToLambda(entry, sync);
+//  if (BGLApp.clientSideGooglePost) {
+//    postToGoogle(entry, sync);
+//  }
+}
+
+function postToLambda(entry, sync) {
+  var endpoint = 'https://yrrvbcgzkh.execute-api.us-east-1.amazonaws.com/prod/bgl-post';
+  console.log(entry);
+  $.post(endpoint, entry, function(result){
+        console.log(result);
+    });
+}
+
+function postToConnect(entry, sync){
+  if (entry.notes.indexOf('testNoParse ') == -1) { 
+    entry.timestamp = entry.timestamp.replace(' ', 'T') + ':00.000+10:00'
+    connect.push('prahlads-results', entry);
   }
 }
 
@@ -449,6 +469,13 @@ function initializeParse() {
   }
 }
 
+function initializeConnect() {
+    connect = new Connect({
+      projectId: '55d45878ba2ddd117cbff1e5',
+      apiKey: '72163C0D65D2A153F4C32C0FE7A80F28-C1393639BACA4CBD3164E0D36AE0575216B2AA7259D687900CE2D61A1B3EB4BA42A99831668518641FA36529FC208FEC19E1A620BD2268F9DE1D44C861852598'
+  });  
+}
+
 function pageSetup(){
   console.log('Setting up App');
   setValuesFromURL();
@@ -456,6 +483,7 @@ function pageSetup(){
   BGLApp.parseInitialized = false;
   if (BGLApp.onLine) {
       initializeParse();
+      initializeConnect();
   }
   
   // Set the edit link from the secrets file
@@ -474,6 +502,7 @@ function pageSetup(){
     console.log('Going Online...');
     $('#online-status').text('[ v' + BGLApp.appVersion + ' Working Online ]');
     initializeParse();
+    initializeConnect();
     writeDirtyStore();
   });
   window.addEventListener('offline', function goOffline(){
